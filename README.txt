@@ -1,3 +1,5 @@
+C implementation of PageRank. Using CSR and the power iteration method.
+
 To run the program simply run the following command line:
 
 $ gcc Project.c
