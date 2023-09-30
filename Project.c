@@ -157,8 +157,7 @@ void order_dataset(char * filename, char * out_filename, int * nodes, int * edge
         printf("Unable to create file.\n");
         exit(1);
     }
-
-    // Scrive file 
+    
     int start_with_one = check(filename);
 
     for (int i = 0; i < dict.dim; i++) {
@@ -171,7 +170,6 @@ void order_dataset(char * filename, char * out_filename, int * nodes, int * edge
     }
     fclose(fp_out);
 
-    // Free Memory
     for (int i = 0; i < dict.dim; i++) {
         free(dict.dictionary[i].value);
     }
@@ -191,7 +189,7 @@ void page_rank(char * filename, int nodes, int edges) {
         exit(1);
     }
 
-    // Costruisce CSR
+    // CSR
     float *val = (float *) calloc(edges, sizeof(float));
     int *col_ind = (int *) calloc(edges, sizeof(int));
     int *row_ptr = (int *) calloc(nodes + 1, sizeof(int));
@@ -232,17 +230,14 @@ void page_rank(char * filename, int nodes, int edges) {
         row++;
     }
 
-    // Rendiamo la matrice compressa stocastica, inzializziamo il vettore degli outlinks per ogni nodo a zero
     for (int i = 0; i < edges; i++) {
         out_link[col_ind[i]] = out_link[col_ind[i]] + 1;
     }
 
-    // Andiamo a calcoalre i valori della "matrice di adicenza" compressa, 1/Oj (# Oj out-link di j)
     for (int i = 0; i < edges; i++) {
         val[i] = val[i] / out_link[col_ind[i]];
     }
 
-    // Inizializziamo il vettore dei "punteggi"
     float p[nodes];
     for (i = 0; i < nodes; i++)
         p[i] = 1.0 / nodes;
@@ -250,12 +245,12 @@ void page_rank(char * filename, int nodes, int edges) {
     int looping = 1;
     int k = 0;
     float p_new[nodes];
-    float d = 0.85; // Valore che viene settato nel paper originale
+    float d = 0.85; 
     int num_elem_row = 0;
     float dandling_nodes = 0;
 
     while (looping) {
-        // Inizializziamo il nuovo vettore dei "punteggi"
+        
         for (i = 0; i < nodes; i++)
             p_new[i] = 0.0;
 
@@ -263,7 +258,6 @@ void page_rank(char * filename, int nodes, int edges) {
         dandling_nodes = 0;
         int pt = 0;
 
-        // Moltiplicazione tra Matrice e punteggio
         for (i = 0; i < nodes; i++) {
             num_elem_row = row_ptr[i + 1] - row_ptr[i];
             for (j = 0; j < num_elem_row; j++) {
@@ -282,7 +276,6 @@ void page_rank(char * filename, int nodes, int edges) {
         for (i = 0; i < nodes; i++)
             p_new[i] = d * p_new[i] + (1.0 - d) / nodes;
         
-        // Verifichiamo la terminazione
         float epsilon = 0.0;
         for (i = 0; i < nodes; i++)
             epsilon = epsilon + fabs(p_new[i] - p[i]);
