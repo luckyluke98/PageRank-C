@@ -18,7 +18,6 @@ struct dictionary_entry {
 struct dictionary {
     struct dictionary_entry * dictionary;
     int dim;
-    int * occ;
 };
 
 struct dictionary new_dict(int dim){
